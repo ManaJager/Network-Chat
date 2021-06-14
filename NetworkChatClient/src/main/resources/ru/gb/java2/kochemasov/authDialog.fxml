@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="270.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.gb.java2.kochemasov.controllers.AuthController">
+   <children>
+      <Label layoutX="25.0" layoutY="26.0" text="Логин" />
+      <Label layoutX="25.0" layoutY="64.0" text="Пароль" />
+      <TextField fx:id="loginField" layoutX="78.0" layoutY="22.0" />
+      <PasswordField fx:id="passwordField" layoutX="78.0" layoutY="60.0" />
+      <Button fx:id="authButton" layoutX="55.0" layoutY="109.0" mnemonicParsing="false" onAction="#executeAuthAction" prefHeight="26.0" prefWidth="160.0" text="Войти" />
+   </children>
+</AnchorPane>
