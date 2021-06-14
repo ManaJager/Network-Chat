@@ -48,13 +48,14 @@ public class ViewController {
             return;
         }
 
-        String sender = null;
+        String destinator;
         if (!userList.getSelectionModel().isEmpty()) {
-            sender = userList.getSelectionModel().getSelectedItem();
-        }
+            destinator = userList.getSelectionModel().getSelectedItem();
+        } else destinator = "broadcast";
 
         try {
-            message = sender != null ? String.format("%s %s", sender, message) : message;
+
+            message = String.format("/w %s %s", destinator, message);
             Network.getInstance().sendMessage(message);
         } catch (IOException e) {
             application.showNetworkDialog("Ошибка передачи данных по сети", "Не удалось отправить сообщение");

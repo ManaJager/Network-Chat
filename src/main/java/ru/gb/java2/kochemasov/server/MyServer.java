@@ -40,8 +40,13 @@ public class MyServer {
     }
 
     public void broadcastMessage(String message, ClientHandler sender) throws IOException {
+
         for (ClientHandler client : clients) {
+
             if (client != sender) {
+//                String[] rawMessage = message.split(" ");
+//                String destinator = rawMessage[1];
+//                if(destinator == clients.get().)
                 client.sendMessage(message);
             }
         }

@@ -8,6 +8,7 @@ import java.net.Socket;
 public class ClientHandler {
     public static final String AUTH_OK_COMMAND = "/authOk";
     public static final String AUTH_COMMAND = "/auth";
+    public static final String SEND_COMMAND = "/w";
 
     private final MyServer server;
     private final Socket clientSocket;
@@ -81,6 +82,7 @@ public class ClientHandler {
     }
 
     public void sendMessage(String message) throws IOException {
+
         outputStream.writeUTF(message);
     }
 }
