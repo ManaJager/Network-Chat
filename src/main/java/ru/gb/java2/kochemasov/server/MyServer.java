@@ -5,12 +5,12 @@ import ru.gb.java2.kochemasov.server.auth.AuthService;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MyServer {
 
     private final List<ClientHandler> clients = new ArrayList<>();
+    private final List<String> clientsUsernames = new ArrayList<>();
 
     public AuthService getAuthService() {
         return authService;
@@ -40,22 +40,24 @@ public class MyServer {
     }
 
     public void broadcastMessage(String message, ClientHandler sender) throws IOException {
-
         for (ClientHandler client : clients) {
 
             if (client != sender) {
-//                String[] rawMessage = message.split(" ");
-//                String destinator = rawMessage[1];
-//                if(destinator == clients.get().)
                 client.sendMessage(message);
             }
         }
     }
 
-    public void subscribe(ClientHandler clientHandler){
+    public void subscribe(ClientHandler clientHandler, String username){
         clients.add(clientHandler);
+        clientsUsernames.add(username);
     }
-    public void unSubscribe(ClientHandler clientHandler){
+    public void unSubscribe(ClientHandler clientHandler, String username){
         clients.remove(clientHandler);
+        clientsUsernames.remove(username);
+    }
+
+    public List<String> getClientsUsernames() {
+        return clientsUsernames;
     }
 }

@@ -1,12 +1,11 @@
 package ru.gb.java2.kochemasov.controllers;
 
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import ru.gb.java2.kochemasov.ClientChat;
@@ -55,25 +54,29 @@ public class ViewController {
 
         try {
 
-            message = String.format("/w %s %s", destinator, message);
-            Network.getInstance().sendMessage(message);
+            message = String.format("/w %s %s %s", destinator, message, AuthController.getUsername());
+            if(!destinator.equals(AuthController.getUsername())) Network.getInstance().sendMessage(message);
         } catch (IOException e) {
             application.showNetworkDialog("Ошибка передачи данных по сети", "Не удалось отправить сообщение");
         }
-        appendMessageToChat("Me", message);
+        if(!destinator.equals(AuthController.getUsername())) appendMessageToChat("Me", message);
     }
 
     private void appendMessageToChat(String sender, String message) {
-        chatArea.appendText(DateFormat.getDateTimeInstance().format(new Date()));
-        chatArea.appendText(System.lineSeparator());
-        if (sender != null) {
-            chatArea.appendText(sender + ":");
+        String[] parsed = message.split(" ");
+        String from = parsed[3];
+        if (sender != null && parsed[0].equals("/w")
+                && (parsed[1].equals(AuthController.getUsername()) ||
+                parsed[1].equals("broadcast") || sender.equals("Me"))) {
+            chatArea.appendText(DateFormat.getDateTimeInstance().format(new Date()));
+            chatArea.appendText(System.lineSeparator());
+            if(!sender.equals("Me")) from = "Me";
+            chatArea.appendText(from + ":");
+            chatArea.appendText(System.lineSeparator());
+            chatArea.appendText(parsed[2]);
+            chatArea.appendText(System.lineSeparator());
             chatArea.appendText(System.lineSeparator());
         }
-        chatArea.appendText(message);
-        chatArea.appendText(System.lineSeparator());
-        chatArea.appendText(System.lineSeparator());
-        textInp.clear();
     }
 
     public void setApplication(ClientChat application) {
