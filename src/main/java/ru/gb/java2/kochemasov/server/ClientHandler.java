@@ -8,11 +8,14 @@ import java.net.Socket;
 public class ClientHandler {
     public static final String AUTH_OK_COMMAND = "/authOk";
     public static final String AUTH_COMMAND = "/auth";
+    public static final String SEND_COMMAND = "/w";
+    public static final String AUTH_ERR = "/authErr";
 
     private final MyServer server;
     private final Socket clientSocket;
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
+    private String username;
 
     public ClientHandler(MyServer server, Socket clientSocket) {
         this.server = server;
@@ -46,21 +49,22 @@ public class ClientHandler {
                 String login = parts[1];
                 String password = parts[2];
 
-                String username = server.getAuthService().getUserNameByLoginAndPassword(login, password);
+                username = server.getAuthService().getUserNameByLoginAndPassword(login, password);
                 if (username == null) {
                     sendMessage("Некорректные логин/пароль");
-                } else {
+                } else if(!server.getClientsUsernames().contains(username)){
                     sendMessage(String.format("%s %s", AUTH_OK_COMMAND, username));
-                    server.subscribe(this);
+                    server.subscribe(this, username);
                     return;
+                } else {
+                    sendMessage(String.format("%s %s", AUTH_ERR, username));
                 }
             }
         }
-
     }
 
     private void closeConnection() throws IOException {
-        server.unSubscribe(this);
+        server.unSubscribe(this, username);
         clientSocket.close();
     }
 
@@ -81,6 +85,7 @@ public class ClientHandler {
     }
 
     public void sendMessage(String message) throws IOException {
+
         outputStream.writeUTF(message);
     }
 }

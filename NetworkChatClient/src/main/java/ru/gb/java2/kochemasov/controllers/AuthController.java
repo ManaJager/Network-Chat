@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import ru.gb.java2.kochemasov.ClientChat;
 import ru.gb.java2.kochemasov.Network;
 
@@ -15,6 +17,7 @@ import java.util.function.Consumer;
 public class AuthController {
     public static final String AUTH_COMMAND = "/auth";
     public static final String AUTH_OK_COMMAND = "/authOk";
+    public static final String AUTH_ERR = "/authErr";
     @FXML
     private TextField loginField;
     @FXML
@@ -23,6 +26,12 @@ public class AuthController {
     private Button authButton;
 
     private ClientChat clientChat;
+
+    private static String username;
+
+    public static String getUsername() {
+        return username;
+    }
 
     @FXML
     public void executeAuthAction(ActionEvent actionEvent) {
@@ -58,13 +67,19 @@ public class AuthController {
             public void accept(String message) {
                 if (message.startsWith(AUTH_OK_COMMAND)) {
                     String[] parts = message.split(" ");
-                    String username = parts[1];
+                    username = parts[1];
                     Thread.currentThread().interrupt();
                     Platform.runLater(() -> {
                                 clientChat.getChatStage().setTitle(username);
                                 clientChat.getAuthStage().close();
                             }
                     );
+                } else if (message.startsWith(AUTH_ERR)){
+                    Platform.runLater(() -> {
+                        clientChat.showErrorDialog("Аутентификация",
+                                "Пользователь уже залогинен",
+                                "Открыта активная сессия данного пользователя!");
+                    });
                 } else {
                     Platform.runLater(() -> {
                         clientChat.showErrorDialog("Аутентификация",
@@ -74,5 +89,11 @@ public class AuthController {
                 }
             }
         });
+    }
+
+    public void onAuthPressEnter(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            executeAuthAction(null);
+        }
     }
 }

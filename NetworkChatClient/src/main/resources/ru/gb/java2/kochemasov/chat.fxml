@@ -11,7 +11,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.gb.java2.kochemasov.controllers.ViewController">
    <top>
-      <Label text="Имя текущего юзера" BorderPane.alignment="CENTER" />
+      <Label fx:id="header" text="Имя текущего юзера" BorderPane.alignment="CENTER" />
    </top>
    <bottom>
       <HBox maxHeight="20.0" BorderPane.alignment="CENTER">
