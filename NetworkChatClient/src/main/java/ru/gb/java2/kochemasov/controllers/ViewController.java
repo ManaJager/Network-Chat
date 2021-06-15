@@ -63,7 +63,7 @@ public class ViewController {
     }
 
     private void appendMessageToChat(String sender, String message) {
-        String[] parsed = message.split(" ");
+        String[] parsed = message.split(" ", 3);
         String from = parsed[3];
         if (sender != null && parsed[0].equals("/w")
                 && (parsed[1].equals(AuthController.getUsername()) ||
