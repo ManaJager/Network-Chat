@@ -9,7 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import ru.gb.java2.kochemasov.ClientChat;
-import ru.gb.java2.kochemasov.Network;
+import ru.gb.java2.kochemasov.dialogs.Dialogs;
+import ru.gb.java2.kochemasov.model.Network;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -40,9 +41,12 @@ public class AuthController {
 
         if (login == null || login.isBlank() ||
                 password == null || password.isBlank()) {
-            clientChat.showErrorDialog("Аутентификация",
-                    "Некорректные данные!",
-                    "Логин и пароль должны быть заполнены!");
+            Dialogs.AuthError.EMPTY_CREDENTIALS.show();
+            return;
+        }
+
+        if (!connectToServer()) {
+            Dialogs.NetworkError.SERVER_CONNECT.show();
             return;
         }
 
@@ -51,10 +55,18 @@ public class AuthController {
         try {
             Network.getInstance().sendMessage(authCommandMessage);
         } catch (IOException e) {
-            clientChat.showNetworkDialog("Ошибка передачи данных по сети",
-                    "Не удалось отправить сообщение!");
+            Dialogs.NetworkError.SEND_MESSAGE.show();
             e.printStackTrace();
         }
+    }
+
+    private boolean connectToServer() {
+        Network network = getNetwork();
+        return network.isConnected() || network.connect();
+    }
+
+    private Network getNetwork() {
+        return Network.getInstance();
     }
 
     public void setClientChat(ClientChat clientChat) {
@@ -76,16 +88,10 @@ public class AuthController {
                     );
                 } else if (message.startsWith(AUTH_ERR)){
                     Platform.runLater(() -> {
-                        clientChat.showErrorDialog("Аутентификация",
-                                "Пользователь уже залогинен",
-                                "Открыта активная сессия данного пользователя!");
+                        ClientChat.INSTANCE.switchToMainChatWindow(username);
                     });
                 } else {
-                    Platform.runLater(() -> {
-                        clientChat.showErrorDialog("Аутентификация",
-                                "Некорректные данные!",
-                                "Пользователя с такими логином/паролем не существует!");
-                    });
+                    Platform.runLater(Dialogs.AuthError.INVALID_CREDENTIALS::show);
                 }
             }
         });
@@ -95,5 +101,9 @@ public class AuthController {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             executeAuthAction(null);
         }
+    }
+
+    public void close() {
+        //getNetwork().removeReadMessageListener(readMessageListener);
     }
 }

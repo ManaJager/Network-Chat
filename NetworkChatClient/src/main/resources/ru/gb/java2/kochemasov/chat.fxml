@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.gb.java2.kochemasov.controllers.ViewController">
+<BorderPane xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.gb.java2.kochemasov.controllers.ChatController">
    <top>
       <Label fx:id="header" text="Имя текущего юзера" BorderPane.alignment="CENTER" />
    </top>

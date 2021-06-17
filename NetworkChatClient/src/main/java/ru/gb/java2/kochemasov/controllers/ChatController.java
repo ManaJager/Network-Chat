@@ -1,21 +1,20 @@
 package ru.gb.java2.kochemasov.controllers;
 
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import ru.gb.java2.kochemasov.ClientChat;
-import ru.gb.java2.kochemasov.Network;
+import ru.gb.java2.kochemasov.dialogs.Dialogs;
+import ru.gb.java2.kochemasov.model.Network;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 
-public class ViewController {
+public class ChatController {
     @FXML
     public ListView<String> userList;
     @FXML
@@ -57,7 +56,7 @@ public class ViewController {
             message = String.format("/w %s %s %s", destinator, message, AuthController.getUsername());
             if(!destinator.equals(AuthController.getUsername())) Network.getInstance().sendMessage(message);
         } catch (IOException e) {
-            application.showNetworkDialog("Ошибка передачи данных по сети", "Не удалось отправить сообщение");
+            Dialogs.NetworkError.SEND_MESSAGE.show();
         }
         if(!destinator.equals(AuthController.getUsername())) appendMessageToChat("Me", message);
     }
@@ -85,7 +84,7 @@ public class ViewController {
 
     public void initMessageHandler() {
         Network.getInstance().waitMessages(message -> Platform.runLater(() -> {
-            ViewController.this.appendMessageToChat("Server", message);
+            ChatController.this.appendMessageToChat("Server", message);
         }));
     }
 }
